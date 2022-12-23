@@ -2,20 +2,17 @@
 
 #include <X11/XF86keysym.h>
 /* appearance */
-static const char *upvol[]   = { "/usr/bin/pactl", "set-sink-volume", "0", "+5%",     NULL };
-static const char *downvol[] = { "/usr/bin/pactl", "set-sink-volume", "0", "-5%",     NULL };
-static const char *mutevol[] = { "/usr/bin/pactl", "set-sink-mute",   "0", "toggle",  NULL };
 static const unsigned int borderpx  = 1;        /* border pixel of windows */
 static const unsigned int snap      = 32;       /* snap pixel */
 static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
-static const char *fonts[]          = { "monospace:size=15" };
-static const char dmenufont[]       = "monospace:size=15";
-static const char col_gray1[]       = "#222222";
-static const char col_gray2[]       = "#444444";
+static const char *fonts[]          = { "mononoki:size=18" };
+static const char dmenufont[]       = "mononoki:size=18";
+static const char col_gray1[]       = "#161922";
+static const char col_gray2[]       = "#161922";
 static const char col_gray3[]       = "#bbbbbb";
-static const char col_gray4[]       = "#eeeeee";
-static const char col_cyan[]        = "#005577";
+static const char col_gray4[]       = "#facf0f";
+static const char col_cyan[]        = "#363d48";
 static const char *colors[][3]      = {
 	/*               fg         bg         border   */
 	[SchemeNorm] = { col_gray3, col_gray1, col_gray2 },
@@ -38,7 +35,7 @@ static const Rule rules[] = {
 /* layout(s) */
 static const float mfact     = 0.55; /* factor of master area size [0.05..0.95] */
 static const int nmaster     = 1;    /* number of clients in master area */
-static const int resizehints = 1;    /* 1 means respect size hints in tiled resizals */
+static const int resizehints = 0;    /* 1 means respect size hints in tiled resizals */
 static const int lockfullscreen = 1; /* 1 will force focus on the fullscreen window */
 
 static const Layout layouts[] = {
@@ -57,18 +54,22 @@ static const Layout layouts[] = {
 	{ MODKEY|ControlMask|ShiftMask, KEY,      toggletag,      {.ui = 1 << TAG} },
 
 /* helper for spawning shell commands in the pre dwm-5.0 fashion */
-#define SHCMD(cmd) { .v = (const char*[]){ "/usr/loca/bin/st", "-c", cmd, NULL } }
+#define SHCMD(cmd) { .v = (const char*[]){ "/usr/local/bin/st", "-c", cmd, NULL } }
 
 /* commands */
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
-static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
+static const char *dmenucmd[] = { "dmenu_run", "-c", "-m", dmenumon, NULL }; 
 static const char *termcmd[]  = { "st", NULL };
+
+
+/* custom commands */
+static const char *volupcmd[]	= { "/bin/bash", "-c", "amixer -D default sset Master Playback 5%+; kill -44 $(pidof dwmblocks)" };
+static const char *voldowncmd[]	= { "/bin/bash", "-c", "amixer -D default sset Master Playback 5%-; kill -44 $(pidof dwmblocks)" };
 
 static const Key keys[] = {
 	/* modifier                     key        function        argument */
-	{ MODKEY,                       XK_F11, spawn, {.v = downvol } },
-	{ MODKEY,                       XK_F9,  spawn, {.v = mutevol } },
-	{ MODKEY,                       XK_F12, spawn, {.v = upvol   } },
+	{ MODKEY,                       XK_Up,    spawn,           {.v = volupcmd } },
+	{ MODKEY,                       XK_Down,     spawn,        {.v = voldowncmd } },
 	{ MODKEY,                       XK_p,      spawn,          {.v = dmenucmd } },
 	{ MODKEY|ShiftMask,             XK_Return, spawn,          {.v = termcmd } },
 	{ MODKEY,                       XK_b,      togglebar,      {0} },
